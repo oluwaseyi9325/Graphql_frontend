@@ -16,7 +16,8 @@ const cache=  new InMemoryCache({
         allAuthor: {
           merge(existing , incoming) {
             return incoming;
-          }
+          },
+        
       },
       getSingleAuthor: {
         merge(existing , incoming) {
@@ -28,7 +29,7 @@ const cache=  new InMemoryCache({
 });
 
 const client = new ApolloClient({
-  uri: 'http://localhost:5008/graphql',
+  uri: 'http://localhost:5000/graphql',
   // cache: new InMemoryCache()
   cache
 })
@@ -38,6 +39,7 @@ function App() {
    <ApolloProvider client={client}>
     {/* <Books/> */}
     <Routes>
+  
     <Route path="/authors" element={<Authors/>}/>
     <Route path="/viewAuthor/:id" element={<ViewAuthors/>}/>
     <Route path="/books" element={<Books/>}/>

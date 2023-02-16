@@ -11,18 +11,18 @@ const GET_AUTHORS = gql`
     }
 `
 
-const getSignleAuthor = gql`
+const getSingleAuthor = gql`
     query getSingleAuthor($id:ID!){
         getSingleAuthor(id:$id){
             name,
             age,
             id,
-           book_own{
-            name,
-            genre
-           }
-
+            authorBook{
+                name,
+                genre,
+                id
+                }
         }
     }
 `
-export {GET_AUTHORS,getSignleAuthor};
+export {GET_AUTHORS,getSingleAuthor};

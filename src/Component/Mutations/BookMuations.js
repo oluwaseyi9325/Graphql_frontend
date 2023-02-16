@@ -4,9 +4,10 @@ import {gql} from "@apollo/client";
 const DEL_BOOK = gql`
    mutation del_Book($id:ID!){
        delBook(id:$id){
-     message
-     status
-     success
+        name
+    #  message
+    #  status
+    #  success
        }
    }
 `
@@ -16,7 +17,8 @@ const ADD_BOOK = gql`
         addBook(name:$name,genre:$genre,authorId:$authorId){
             name,
             genre,
-            id
+            id,
+               
         }
     }
 `

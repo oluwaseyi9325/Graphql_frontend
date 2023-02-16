@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { getSignleAuthor } from "./Queries/authorQueries";
+import { getSingleAuthor } from "./Queries/authorQueries";
 import { useMutation, useQuery } from "@apollo/client";
-import { ADD_BOOK } from "./Mutations/BookMuations";
+import { ADD_BOOK, DEL_BOOK } from "./Mutations/BookMuations";
 
 function ViewAuthors() {
   const [bookName, setBookName] = useState("");
@@ -11,45 +11,79 @@ function ViewAuthors() {
   const { id } = useParams();
   
   // get the id from the url
-  console.log(id);
+  // console.log(id);
   // get single author from the server
-  const { loading, error, data, refetch } = useQuery(getSignleAuthor, {
+  const { loading, error, data, refetch } = useQuery(getSingleAuthor, {
     variables: {
       id,
     },
   });
-  console.log(data);
-  console.log(loading);
-  console.log(error);
+
   const addBtn = () => {
-    console.log(bookName);
-    console.log(genre);
-    const book = {
-      name: bookName,
-      genre: genre,
-      authorId: id,
-    };
-    console.log(book);
+  
     addBook({
       variables: {
         name: bookName,
         genre: genre,
         authorId: id,
       },
-      onCompleted: (data) => {
-        console.log(data);
-        refetch();
-      }
-    });
+  
+                
 
+    //  onCompleted: () => {
+    //   setBookName("");
+    //   setGenre("");
+    //     refetch();
+        
+    //  },
+    //  onError: (err) => {
+    //     console.log(err);
+    //  },
+    },
+
+    
+    
+    );
+
+    console.log(data.getSingleAuthor.authorBook)
+    
   };
+
+  const [delBook] = useMutation(DEL_BOOK);
+   const delBtn= (id) => {
+    //  console.log(id);
+     delBook({
+        variables: {
+          id,
+        },
+
+      update: (cache) => {
+        cache.modify({
+          fields: {
+            allBook(existingBookRefs, { readField }) {
+              return existingBookRefs.filter(
+                (bookRef) => id !== readField("id", bookRef)
+              );
+            },
+          },
+        });
+      }})
+
+   }
+
+
+
+
+
+
+
   if (loading) return <p>Loading...</p>;
   return (
     <div>
       <h2>Single Authors Page</h2>
       <p>
-        <h2>Name: {data.getSingleAuthor.name}</h2>
-        <h2>Age: {data.getSingleAuthor.age}</h2>
+        <h2>Name: {data?.getSingleAuthor.name}</h2>
+        <h2>Age: {data?.getSingleAuthor.age}</h2>
       </p>
       <div>
         <hr />
@@ -88,11 +122,12 @@ function ViewAuthors() {
       <div>
         <hr />
         <h4>BOOKS WRITTEN</h4>
-        {data.getSingleAuthor.book_own.map((book, index) => (
+        {data?.getSingleAuthor.authorBook.map((book, index) => (
           <div key={index}>
             <p>{index + 1}</p>
             <p>{book.name}</p>
             <p>{book.genre}</p>
+            <button onClick={()=>delBtn(book.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold  px-2 rounded">DEl</button>
             <hr />
           </div>
         ))}
